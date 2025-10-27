@@ -1,0 +1,173 @@
+/* Custom styles for product page */
+
+/* General styles */
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Header styles */
+.page-header {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+}
+
+.page-header h1 {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Search and filter section */
+.search-section {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    margin-bottom: 2rem;
+    padding: 1rem;
+}
+
+#searchInput {
+    border-radius: 20px;
+    padding-left: 1rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+#searchInput:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+#limitSelect {
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Product card styles */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.price {
+    color: #2ecc71;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.card-text {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Stock and ID badges */
+.muted {
+    color: #95a5a6;
+    font-size: 0.85rem;
+}
+
+.badge {
+    background-color: #f8f9fa;
+    color: #7f8c8d;
+    font-weight: 500;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+}
+
+/* Pagination styles */
+.pagination {
+    margin-top: 2rem;
+}
+
+.page-link {
+    color: #3498db;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.page-link:hover {
+    color: #2980b9;
+    background-color: #f8f9fa;
+}
+
+.page-item.disabled .page-link {
+    background-color: transparent;
+    color: #95a5a6;
+}
+
+/* Loading spinner */
+.spinner-border {
+    color: #3498db;
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Alert styles */
+.alert {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.alert-danger {
+    background-color: #fff5f5;
+    color: #c0392b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .search-section {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    #searchInput, #limitSelect {
+        width: 100% !important;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.3s ease-out;
+}
