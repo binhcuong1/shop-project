@@ -1,0 +1,11 @@
+# node
+**/node_modules/
+**/.env
+npm-debug.log*
+yarn*.log
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
