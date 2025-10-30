@@ -42,6 +42,8 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log(username);
+    console.log(password);
 
     if (!username || !password)
       return res.status(400).json({ message: 'username & password are required' });

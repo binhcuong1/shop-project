@@ -3,8 +3,15 @@ const OrderDetail = require('../models/orderDetailModel');
 const jwt = require('jsonwebtoken');
 
 exports.getAll = async (req, res) => {
-    const orders = await Order.find({ isDeleted: false });
-    res.json({ success: true, data: orders });
+    try {
+        const orders = await Order.find({ isDeleted: false })
+            .populate({ path: 'user', select: 'username email' }) 
+            .select('-__v')                                       
+            .sort({ createdAt: -1 });                             
+        res.json({ success: true, data: orders });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 };
 
 exports.getById = async (req, res) => {

@@ -129,7 +129,8 @@ load();
     const userBox = document.getElementById('userBox');
     const helloUser = document.getElementById('helloUser');
     const btnLogout = document.getElementById('btnLogout');
-    const adminLink = document.getElementById('adminLink'); // 👈 thêm dòng này
+    const adminLink = document.getElementById('adminLink');
+    const orderLink = document.getElementById('orderLink');
 
     if (token && username) {
         helloUser && (helloUser.textContent = `Xin chào, ${username}`);
@@ -137,9 +138,13 @@ load();
         btnRegister?.classList.add('d-none');
         userBox?.classList.remove('d-none');
 
-        // 👇 chỉ admin mới thấy menu quản trị
-        if (role === 'admin') adminLink?.classList.remove('d-none');
-        else adminLink?.classList.add('d-none');
+        if (role === 'admin') {
+            adminLink?.classList.remove('d-none');
+            orderLink?.classList.remove('d-none');
+        } else {
+            adminLink?.classList.add('d-none');
+            orderLink?.classList.add('d-none');
+        }
     } else {
         adminLink?.classList.add('d-none');
     }
