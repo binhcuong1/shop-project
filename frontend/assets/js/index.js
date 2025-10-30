@@ -117,3 +117,30 @@ nextBtn.addEventListener('click', () => { if (page < totalPages) { page++; (cach
 
 // init
 load();
+
+// ====== Header Login / Logout toggle ======
+(function () {
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+
+    const btnLogin = document.getElementById('btnLogin');
+    const btnRegister = document.getElementById('btnRegister');
+    const userBox = document.getElementById('userBox');
+    const helloUser = document.getElementById('helloUser');
+    const btnLogout = document.getElementById('btnLogout');
+
+    if (token && username) {
+        if (helloUser) helloUser.textContent = `Xin chào, ${username}`;
+        if (btnLogin) btnLogin.classList.add('d-none');
+        if (btnRegister) btnRegister.classList.add('d-none');
+        if (userBox) userBox.classList.remove('d-none');
+    }
+
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            location.reload();
+        });
+    }
+})();

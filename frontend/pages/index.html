@@ -14,9 +14,29 @@
         <div class="container">
             <a class="navbar-brand" href="./index.html">QShop</a>
             <div class="d-flex align-items-center ms-auto gap-2">
-                <a href="../pages/admin/product.html" class="btn btn-outline-light btn-sm">Sản phẩm</a>
+                <!-- Link quản lý (tùy chọn) -->
+                <a href="./pages/admin/products.html" class="btn btn-outline-light btn-sm d-none d-sm-inline">Quản
+                    lý</a>
+
+                <!-- Khi CHƯA đăng nhập -->
+                <a href="../pages/auth/login.html" id="btnLogin" class="btn btn-outline-light btn-sm">Đăng nhập</a>
+                <a href="../pages/auth/register.html" id="btnRegister" class="btn btn-light btn-sm">Đăng ký</a>
+
+                <!-- Khi ĐÃ đăng nhập -->
+                <div id="userBox" class="dropdown d-none">
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                        <span id="helloUser">Xin chào</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="./pages/admin/products.html">Quản lý sản phẩm</a></li>
+                        <li><button class="dropdown-item" id="btnLogout">Đăng xuất</button></li>
+                    </ul>
+                </div>
+
+                <!-- Ô tìm kiếm giữ nguyên -->
                 <input id="searchBox" class="form-control form-control-sm" placeholder="Tìm sản phẩm...">
             </div>
+
 
         </div>
     </nav>
