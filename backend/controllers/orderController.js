@@ -1,13 +1,15 @@
 const Order = require('../models/orderModel');
 const OrderDetail = require('../models/orderDetailModel');
+const Product = require('../models/productModel'); 
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 exports.getAll = async (req, res) => {
     try {
         const orders = await Order.find({ isDeleted: false })
-            .populate({ path: 'user', select: 'username email' }) 
-            .select('-__v')                                       
-            .sort({ createdAt: -1 });                             
+            .populate({ path: 'user', select: 'username email' })
+            .select('-__v')
+            .sort({ createdAt: -1 });
         res.json({ success: true, data: orders });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -29,24 +31,44 @@ exports.create = async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mysecret');
 
         const { items } = req.body;
-        if (!items || !Array.isArray(items) || items.length === 0)
-            return res.status(400).json({ message: 'Thiếu danh sách sản phẩm' });
+        console.log('Body nhận từ FE:', JSON.stringify(req.body, null, 2));
 
-        const order = await Order.create({
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ message: 'Thiếu danh sách sản phẩm' });
+        }
+
+        const order = new Order({
             user: decoded.id,
             totalAmount: 0,
             status: 'pending',
         });
+        await order.save();
 
+        const detailsToInsert = [];
         let total = 0;
-        for (const item of items) {
-            const productId = item.product || item._id || item.id;
-            if (!productId) throw new Error('Thiếu product/id trong item');
 
-            const { quantity, unitPrice } = item;
+        for (const raw of items) {
+            const productId = raw.product || raw._id || raw.id;
+            const quantity = Number(raw.quantity) || 0;
+            let unitPrice = Number(raw.unitPrice);
+
+            if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+                return res.status(400).json({ message: 'productId không hợp lệ' });
+            }
+            if (quantity <= 0) {
+                return res.status(400).json({ message: 'quantity phải > 0' });
+            }
+
+            if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+                const p = await Product.findById(productId).select('price');
+                if (!p) return res.status(400).json({ message: 'Sản phẩm không tồn tại' });
+                unitPrice = Number(p.price);
+            }
+
             const subtotal = quantity * unitPrice;
             total += subtotal;
-            await OrderDetail.create({
+
+            detailsToInsert.push({
                 order: order._id,
                 product: productId,
                 quantity,
@@ -55,16 +77,24 @@ exports.create = async (req, res) => {
             });
         }
 
+        if (detailsToInsert.length) {
+            await OrderDetail.insertMany(detailsToInsert);
+        }
 
         order.totalAmount = total;
         await order.save();
 
-        res.status(201).json({ success: true, data: order });
+        const populated = await Order.findById(order._id)
+            .populate('user', 'username email')
+            .select('-__v');
+
+        return res.status(201).json({ success: true, data: populated });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: err.message });
+        console.error('Lỗi tạo đơn hàng:', err);
+        return res.status(500).json({ message: err.message });
     }
 };
+
 
 exports.update = async (req, res) => {
     const o = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -111,6 +141,32 @@ exports.updateStatus = async (req, res) => {
         );
         if (!order) return res.status(404).json({ message: 'Order not found' });
         res.json({ success: true, data: order });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.getMyOrders = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        const orders = await Order.find({ isDeleted: false, user: userId })
+            .sort({ createdAt: -1 });
+        res.json({ success: true, data: orders });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.getMyOrderDetails = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+        if (String(order.user) !== req.user.id)
+            return res.status(403).json({ message: 'Forbidden' });
+
+        const details = await OrderDetail.find({ order: order._id })
+            .populate('product', 'name price');
+        res.json({ success: true, data: { order, details } });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
