@@ -35,14 +35,22 @@ if (logForm) {
             username: document.getElementById("username").value,
             password: document.getElementById("password").value
         };
+
         const res = await fetch(`${API_URL}/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
         });
+
         const data = await res.json();
+        const token = data.token;
+
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload?.role) localStorage.setItem("role", payload.role);
+
         if (data.success) {
             localStorage.setItem("token", data.token);
+            localStorage.setItem("username", data.username);
             localStorage.setItem("username", data.data.username);
             msg.classList.replace("text-danger", "text-success");
             msg.textContent = "Đăng nhập thành công! Chuyển về trang chủ...";

@@ -122,27 +122,34 @@ load();
 (function () {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
+    const role = localStorage.getItem('role');
 
     const btnLogin = document.getElementById('btnLogin');
     const btnRegister = document.getElementById('btnRegister');
     const userBox = document.getElementById('userBox');
     const helloUser = document.getElementById('helloUser');
     const btnLogout = document.getElementById('btnLogout');
+    const adminLink = document.getElementById('adminLink'); // 👈 thêm dòng này
 
     if (token && username) {
-        if (helloUser) helloUser.textContent = `Xin chào, ${username}`;
-        if (btnLogin) btnLogin.classList.add('d-none');
-        if (btnRegister) btnRegister.classList.add('d-none');
-        if (userBox) userBox.classList.remove('d-none');
+        helloUser && (helloUser.textContent = `Xin chào, ${username}`);
+        btnLogin?.classList.add('d-none');
+        btnRegister?.classList.add('d-none');
+        userBox?.classList.remove('d-none');
+
+        // 👇 chỉ admin mới thấy menu quản trị
+        if (role === 'admin') adminLink?.classList.remove('d-none');
+        else adminLink?.classList.add('d-none');
+    } else {
+        adminLink?.classList.add('d-none');
     }
 
-    if (btnLogout) {
-        btnLogout.addEventListener('click', () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('username');
-            location.reload();
-        });
-    }
+    btnLogout?.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('role'); // 👈 nhớ xóa role
+        location.reload();
+    });
 })();
 
 (function updateCartBadge() {
