@@ -144,3 +144,9 @@ load();
         });
     }
 })();
+
+(function updateCartBadge() {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const badge = document.getElementById("cartCount");
+    if (badge) badge.textContent = cart.length;
+})();

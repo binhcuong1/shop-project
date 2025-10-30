@@ -1,26 +1,46 @@
-const key = 'cart', tbody = document.getElementById('tbody'), grand = document.getElementById('grand');
-const fmt = n => (n ?? 0).toLocaleString('vi-VN') + ' đ';
-function load() {
-    const cart = JSON.parse(localStorage.getItem(key) || '[]');
-    let total = 0;
-    tbody.innerHTML = cart.map((x, i) => {
-        const sub = x.price * x.qty; total += sub;
-        return `<tr>
-      <td>${x.name}</td>
-      <td class="text-end">${fmt(x.price)}</td>
+const tbody = document.getElementById("tbody");
+const grand = document.getElementById("grand");
+
+function loadCart() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  console.table(cart);
+  tbody.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    const subtotal = p.price * p.qty;
+    total += subtotal;
+    tr.innerHTML = `
+      <td>${p.name}</td>
+      <td class="text-end">${p.price.toLocaleString()} đ</td>
       <td class="text-center">
-        <div class="btn-group btn-group-sm">
-          <button class="btn btn-outline-secondary" onclick="chg(${i},-1)">-</button>
-          <span class="btn btn-light disabled">${x.qty}</span>
-          <button class="btn btn-outline-secondary" onclick="chg(${i},1)">+</button>
-        </div>
+        <input type="number" min="1" value="${p.qty}" data-index="${i}" class="form-control form-control-sm text-center qty-input">
       </td>
-      <td class="text-end">${fmt(sub)}</td>
-      <td><button class="btn btn-sm btn-danger" onclick="del(${i})">Xóa</button></td>
-    </tr>`;
-    }).join('');
-    grand.textContent = fmt(total);
+      <td class="text-end">${subtotal.toLocaleString()} đ</td>
+      <td class="text-end"><button class="btn btn-sm btn-danger" onclick="removeItem(${i})">X</button></td>`;
+    tbody.appendChild(tr);
+  });
+
+  grand.textContent = total.toLocaleString() + " đ";
 }
-function chg(i, d) { const c = JSON.parse(localStorage.getItem(key) || '[]'); c[i].qty = Math.max(1, c[i].qty + d); localStorage.setItem(key, JSON.stringify(c)); load(); }
-function del(i) { const c = JSON.parse(localStorage.getItem(key) || '[]'); c.splice(i, 1); localStorage.setItem(key, JSON.stringify(c)); load(); }
-load();
+
+function removeItem(i) {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  cart.splice(i, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  loadCart();
+}
+
+// cập nhật số lượng
+tbody?.addEventListener("change", (e) => {
+  if (e.target.classList.contains("qty-input")) {
+    const i = e.target.dataset.index;
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    cart[i].qty = parseInt(e.target.value);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    loadCart();
+  }
+});
+
+loadCart();
