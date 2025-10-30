@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     stock: { type: Number, default: 0 },
     description: { type: String, default: "" },
+    image: { type: String, default: "" },
     isDeleted: { type: Boolean, default: false }
 }, { timestamps: true });
 

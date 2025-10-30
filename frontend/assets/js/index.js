@@ -39,7 +39,9 @@ function render(items) {
         col.className = 'col-12 col-sm-6 col-lg-4';
         col.innerHTML = `
   <div class="card h-100">
-    <img src="https://picsum.photos/600/400?random=${Math.floor(Math.random() * 1000)}" class="card-img-top" alt="img">
+    <img src="${p.image ? API_BASE + p.image : 'https://via.placeholder.com/600x400?text=No+Image'}" 
+     class="card-img-top" alt="${esc(p.name)}">
+
     <div class="card-body">
       <h6 class="card-title mb-1">${esc(p.name)}</h6>
       <div class="small text-muted mb-2">Kho: ${p.stock ?? 0}</div>

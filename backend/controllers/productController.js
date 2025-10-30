@@ -42,17 +42,27 @@ exports.getById = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-    const p = new Product(req.body);
-    await p.save();
-    res.status(201).json({ success: true, data: p });
+    try {
+        const data = req.body;
+        if (req.file) data.image = `/uploads/${req.file.filename}`;
+        const p = new Product(data);
+        await p.save();
+        res.status(201).json({ success: true, data: p });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 };
 
 exports.update = async (req, res) => {
-    const p = await Product.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-    });
-    if (!p) return res.status(404).json({ message: "Product not found" });
-    res.json({ success: true, data: p });
+    try {
+        const data = req.body;
+        if (req.file) data.image = `/uploads/${req.file.filename}`;
+        const p = await Product.findByIdAndUpdate(req.params.id, data, { new: true });
+        if (!p) return res.status(404).json({ message: 'Product not found' });
+        res.json({ success: true, data: p });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 };
 
 exports.softDelete = async (req, res) => {
